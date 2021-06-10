@@ -52,3 +52,17 @@ func MakeBucket(c context.Context, bucketname string) {
 func makeBucket(c context.Context, api S3CreateBucketAPI, input *s3.CreateBucketInput) (*s3.CreateBucketOutput, error) {
 	return api.CreateBucket(c, input)
 }
+
+// putBucketConfig creates an Amazon Simple Storage Service (Amazon S3) bucket configuration.
+// Inputs:
+//     c is the context of the method call, which includes the AWS Region
+//     bucketname is the s3 resource name configuration is to be applied
+// Output:
+//     If success, a CreateBucketOutput object containing the result of the service call and nil.
+//     Otherwise, nil and an error from the call to CreateBucket.
+func putBucketConfg(c context.Context, bucketname string) (*s3.PutBucketWebsiteOutput, error) {
+	config := &s3.PutBucketWebsiteInput{
+		Bucket: &bucketname,
+		
+	}
+}
