@@ -12,18 +12,18 @@ import (
 // 	config config.Config
 // }
 
-func NewS3Client() (*s3.Client, error) {
-	ctx := context.TODO()
-	// Load the Shared AWS Configuration (~/.aws/config)
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Create an Amazon S3 service client
-	client := s3.NewFromConfig(cfg)
+// func NewS3Client() (*s3.Client, error) {
+// 	ctx := context.TODO()
+// 	// Load the Shared AWS Configuration (~/.aws/config)
+// 	cfg, err := config.LoadDefaultConfig(ctx)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	// Create an Amazon S3 service client
+// 	client := s3.NewFromConfig(cfg)
 
-	return client, err
-}
+// 	return client, err
+// }
 
 func NewR53Client() (*r53.Client, error) {
 	ctx := context.TODO()
