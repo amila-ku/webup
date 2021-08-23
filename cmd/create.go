@@ -16,11 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 
-	"github.com/spf13/cobra"
 	"github.com/amila-ku/webup/aws"
+	"github.com/spf13/cobra"
 )
 
 var webSiteName string
@@ -28,8 +28,8 @@ var webSiteName string
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a new website hosting",
-	Long: `creates a new website for the given dns name.`,
+	Short: "Creates a new website in AWS",
+	Long:  `Creates a new website for the given dns name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
 		aws.MakeBucket(context.TODO(), webSiteName)
@@ -49,5 +49,5 @@ func init() {
 	// is called directly, e.g.:
 	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	createCmd.Flags().StringVarP(&webSiteName, "domain-name", "n", "", "Web site namem")
+	createCmd.Flags().StringVarP(&webSiteName, "domain-name", "n", "", "Web site name")
 }
