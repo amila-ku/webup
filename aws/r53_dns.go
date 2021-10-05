@@ -29,6 +29,10 @@ func NewR53Client() (*r53.Client, error) {
 	return client, err
 }
 
+func MakeRoutes() error {
+	
+}
+
 func createRoute(c context.Context, api R53CreateHostedZoneAPI, input *r53.CreateHostedZoneInput) (*r53.CreateHostedZoneOutput, error) {
 	return api.CreateHostedZone(c, input )
 }

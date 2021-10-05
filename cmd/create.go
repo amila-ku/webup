@@ -32,7 +32,10 @@ var createCmd = &cobra.Command{
 	Long:  `Creates a new website for the given dns name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("create called")
-		aws.MakeBucket(context.TODO(), webSiteName)
+		err := aws.MakeWebResources(context.TODO(), webSiteName)
+		if err != nil {
+			fmt.Println("failed")
+		}
 	},
 }
 
