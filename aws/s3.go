@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -39,10 +40,10 @@ func NewS3Client() (*s3.Client, error) {
 	return client, err
 }
 
-func MakeBucket(c context.Context, bucketname string) {
+func MakeBucket(c context.Context, bucketname string) (string, error) {
 	if bucketname == "" {
 		fmt.Println("You must supply a bucket name.")
-		return
+		return "", errors.New("empty  bucket name")
 	}
 	input := &s3.CreateBucketInput{
 		Bucket: &bucketname,
@@ -55,12 +56,14 @@ func MakeBucket(c context.Context, bucketname string) {
 	if err != nil {
 		log.Println("Could not create s3 client")
 		log.Fatal(err)
+		return "", errors.New("Could not connect to aws s3")
 	}
 
 	_, err = createBucket(c, client, input)
 	if err != nil {
 		log.Println("Could not create bucket " + bucketname)
 		log.Fatal(err)
+		return "", errors.New("Could not create s3 bucket")
 	}
 
 	webinput := &s3.PutBucketWebsiteInput{
@@ -79,6 +82,7 @@ func MakeBucket(c context.Context, bucketname string) {
 	if err != nil {
 		fmt.Println("bucket " + bucketname + " updated with website configuration")
 		fmt.Println(err)
+		return "", errors.New("Could not update s3 bucket")
 	}
 
 }
