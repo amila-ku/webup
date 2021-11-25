@@ -41,10 +41,9 @@ func NewS3Client() (*s3.Client, error) {
 	return client, err
 }
 
-
-// MakeBucket is used to create an s3 bucket with website config 
+// MakeBucket is used to create an s3 bucket with website config
 // input: website name
-func MakeBucket(c context.Context, bucketname string) (string, error) {
+func MakeBucket(c context.Context, client *s3.Client, bucketname string) (string, error) {
 	if bucketname == "" {
 		fmt.Println("You must supply a bucket name.")
 		return "", errors.New("empty  bucket name")
@@ -56,14 +55,7 @@ func MakeBucket(c context.Context, bucketname string) (string, error) {
 		},
 	}
 
-	client, err := NewS3Client()
-	if err != nil {
-		log.Println("Could not create s3 client")
-		log.Fatal(err)
-		return "", errors.New("Could not connect to aws s3")
-	}
-
-	_, err = createBucket(c, client, input)
+	_, err := createBucket(c, client, input)
 	if err != nil {
 		log.Println("Could not create bucket " + bucketname)
 		log.Fatal(err)

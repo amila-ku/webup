@@ -41,13 +41,12 @@ func NewR53Client() (*r53.Client, error) {
 	return client, err
 }
 
-
-// MakeRoutes is used to create an R53 route for  s3 bucket with website config 
-// input: 
+// MakeRoutes is used to create an R53 route for  s3 bucket with website config
+// input:
 //    s3 website endpoint (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
 //    dns name of the website
 //    dns zone id
-func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (string, error) {
+func MakeRoutes(c context.Context, client *r53.Client, s3websiteendpoint, dnsname, zoneid string) (string, error) {
 
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
@@ -69,14 +68,7 @@ func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (s
 		HostedZoneId: aws.String(zoneid),
 	}
 
-	client, err := NewR53Client()
-	if err != nil {
-		log.Println("Could not create R53 client")
-		log.Fatal(err)
-		return "", errors.New("Could not connect to aws R53")
-	}
-
-	_, err = createRoute(c, client, input, zoneid)
+	_, err := createRoute(c, client, input, zoneid)
 	if err != nil {
 		log.Println("Could not create record ")
 		log.Fatal(err)
