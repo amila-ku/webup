@@ -3,12 +3,12 @@ package aws
 import (
 	"context"
 	"log"
+	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
-	"github.com/aws/aws-sdk-go/service/route53"
 )
 
 // CreateHostedZoneAPI defines the interface for the CreateHostedZone function.
@@ -40,29 +40,49 @@ func NewR53Client() (*r53.Client, error) {
 	return client, err
 }
 
-func MakeRoutes() error {
+func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (string, error) {
 	
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
-			Changes: []*r53types.Change{
+			Changes: []r53types.Change{
 				{
-					Action: aws.String("CREATE"),
-					ResourceRecordSet: &route53.ResourceRecordSet{
-						Name: aws.String("example.com"),
-						ResourceRecords: []*route53.ResourceRecord{
-							{
-								Value: aws.String("192.0.2.44"),
-							},
+					Action: r53types.ChangeActionCreate,
+					ResourceRecordSet: &r53types.ResourceRecordSet{
+						Name: aws.String(dnsname),
+						AliasTarget: &r53types.AliasTarget{
+							DNSName: &s3websiteendpoint,
+							HostedZoneId: hostedZoneIdByS3EndpointRegion("eu-central-1"),
 						},
-						TTL:  aws.Int64(60),
-						Type: aws.String("A"),
+						Type: r53types.RRTypeA,
 					},
+					
 				},
 			},
 			Comment: aws.String("Web server for example.com"),
 		},
-		HostedZoneId: aws.String("Z3M3LMPEXAMPLE"),
+		HostedZoneId: aws.String(zoneid),
 	}
+
+	client, err := NewR53Client()
+	if err != nil {
+		log.Println("Could not create R53 client")
+		log.Fatal(err)
+		return "", errors.New("Could not connect to aws R53")
+	}
+
+	_, err = createRoute(c, client, input, zoneid)
+	if err != nil {
+		log.Println("Could not create record ")
+		log.Fatal(err)
+		return "", errors.New("Could not create R53 record")
+	}
+
+	return dnsname, nil
+}
+
+func hostedZoneIdByS3EndpointRegion(region string) *string {
+	zoneid := string(zonemap[region])
+	return &zoneid
 }
 
 func createRoute(c context.Context, api R53ChangeResourceRecordSetsAPI, input *r53.ChangeResourceRecordSetsInput, hostedzone string) (*r53.ChangeResourceRecordSetsOutput, error) {
