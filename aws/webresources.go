@@ -6,6 +6,10 @@ import (
 	"log"
 )
 
+
+
+// MakeWebResources is used to create an s3 bucket with website config and add required dns entries in Route53
+// input: website name
 func MakeWebResources(c context.Context, webSiteName string) error {
 
 	// creates s3 bucket and setup bucket for webhosting

@@ -11,7 +11,7 @@ import (
 	r53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 )
 
-// CreateHostedZoneAPI defines the interface for the CreateHostedZone function.
+// R53CreateHostedZoneAPI defines the interface for the CreateHostedZone function.
 // We use this interface to test the function using a mocked service.
 type R53CreateHostedZoneAPI interface {
 	CreateHostedZone(ctx context.Context,
@@ -19,7 +19,7 @@ type R53CreateHostedZoneAPI interface {
 		optFns ...func(*r53.Options)) (*r53.CreateHostedZoneOutput, error)
 }
 
-// ChangeResourceRecordSetsAPI defines the interface for the CreateHostedZone function.
+// R53ChangeResourceRecordSetsAPI defines the interface for the CreateHostedZone function.
 // We use this interface to test the function using a mocked service.
 type R53ChangeResourceRecordSetsAPI interface {
 	ChangeResourceRecordSets(ctx context.Context,
@@ -27,6 +27,7 @@ type R53ChangeResourceRecordSetsAPI interface {
 		optFns ...func(*r53.Options)) (*r53.ChangeResourceRecordSetsOutput, error)
 }
 
+// NewR53Client initializes a new aws R53 client.
 func NewR53Client() (*r53.Client, error) {
 	ctx := context.TODO()
 	// Load the Shared AWS Configuration (~/.aws/config)
@@ -40,6 +41,12 @@ func NewR53Client() (*r53.Client, error) {
 	return client, err
 }
 
+
+// MakeRoutes is used to create an R53 route for  s3 bucket with website config 
+// input: 
+//    s3 website endpoint (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
+//    dns name of the website
+//    dns zone id
 func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (string, error) {
 
 	input := &r53.ChangeResourceRecordSetsInput{
@@ -51,7 +58,7 @@ func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (s
 						Name: aws.String(dnsname),
 						AliasTarget: &r53types.AliasTarget{
 							DNSName:      &s3websiteendpoint,
-							HostedZoneId: hostedZoneIdByS3EndpointRegion("eu-central-1"),
+							HostedZoneId: hostedZoneIDByS3EndpointRegion("eu-central-1"),
 						},
 						Type: r53types.RRTypeA,
 					},
@@ -79,7 +86,7 @@ func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (s
 	return dnsname, nil
 }
 
-func hostedZoneIdByS3EndpointRegion(region string) *string {
+func hostedZoneIDByS3EndpointRegion(region string) *string {
 	zoneid := string(zonemap[region])
 	return &zoneid
 }

@@ -19,7 +19,7 @@ type S3CreateBucketAPI interface {
 		optFns ...func(*s3.Options)) (*s3.CreateBucketOutput, error)
 }
 
-// S3CreateBucketAPI defines the interface for the CreateBucket function.
+// S3PutBucketWebsiteAPI defines the interface for the CreateBucket function.
 // We use this interface to test the function using a mocked service.
 type S3PutBucketWebsiteAPI interface {
 	PutBucketWebsite(ctx context.Context,
@@ -27,6 +27,7 @@ type S3PutBucketWebsiteAPI interface {
 		optFns ...func(*s3.Options)) (*s3.PutBucketWebsiteOutput, error)
 }
 
+// NewS3Client initializes a new aws s3 client.
 func NewS3Client() (*s3.Client, error) {
 	ctx := context.TODO()
 	// Load the Shared AWS Configuration (~/.aws/config)
@@ -40,6 +41,9 @@ func NewS3Client() (*s3.Client, error) {
 	return client, err
 }
 
+
+// MakeBucket is used to create an s3 bucket with website config 
+// input: website name
 func MakeBucket(c context.Context, bucketname string) (string, error) {
 	if bucketname == "" {
 		fmt.Println("You must supply a bucket name.")
