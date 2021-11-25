@@ -85,6 +85,8 @@ func MakeBucket(c context.Context, bucketname string) (string, error) {
 		return "", errors.New("Could not update s3 bucket")
 	}
 
+	return bucketname, nil
+
 }
 
 // createBucket creates an Amazon Simple Storage Service (Amazon S3) bucket.
