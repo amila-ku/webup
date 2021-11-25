@@ -2,8 +2,8 @@ package aws
 
 import (
 	"context"
-	"log"
 	"errors"
+	"log"
 )
 
 func MakeWebResources(c context.Context, webSiteName string) error {

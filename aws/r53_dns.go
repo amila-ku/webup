@@ -2,8 +2,8 @@ package aws
 
 import (
 	"context"
-	"log"
 	"errors"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -41,7 +41,7 @@ func NewR53Client() (*r53.Client, error) {
 }
 
 func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (string, error) {
-	
+
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
 			Changes: []r53types.Change{
@@ -50,12 +50,11 @@ func MakeRoutes(c context.Context, s3websiteendpoint, dnsname, zoneid string) (s
 					ResourceRecordSet: &r53types.ResourceRecordSet{
 						Name: aws.String(dnsname),
 						AliasTarget: &r53types.AliasTarget{
-							DNSName: &s3websiteendpoint,
+							DNSName:      &s3websiteendpoint,
 							HostedZoneId: hostedZoneIdByS3EndpointRegion("eu-central-1"),
 						},
 						Type: r53types.RRTypeA,
 					},
-					
 				},
 			},
 			Comment: aws.String("Web server for example.com"),
@@ -86,5 +85,5 @@ func hostedZoneIdByS3EndpointRegion(region string) *string {
 }
 
 func createRoute(c context.Context, api R53ChangeResourceRecordSetsAPI, input *r53.ChangeResourceRecordSetsInput, hostedzone string) (*r53.ChangeResourceRecordSetsOutput, error) {
-	return api.ChangeResourceRecordSets(c, input )
+	return api.ChangeResourceRecordSets(c, input)
 }

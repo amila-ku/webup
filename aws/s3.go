@@ -49,7 +49,7 @@ func MakeBucket(c context.Context, bucketname string) (string, error) {
 		Bucket: &bucketname,
 		CreateBucketConfiguration: &types.CreateBucketConfiguration{
 			LocationConstraint: types.BucketLocationConstraintEuCentral1,
-		} ,
+		},
 	}
 
 	client, err := NewS3Client()
