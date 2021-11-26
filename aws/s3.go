@@ -11,21 +11,24 @@ import (
 	"log"
 )
 
-// S3CreateBucketAPI defines the interface for the CreateBucket function.
+// S3BucketAPI defines the interface for the CreateBucket function.
 // We use this interface to test the function using a mocked service.
-type S3CreateBucketAPI interface {
+type S3BucketAPI interface {
 	CreateBucket(ctx context.Context,
 		params *s3.CreateBucketInput,
 		optFns ...func(*s3.Options)) (*s3.CreateBucketOutput, error)
-}
-
-// S3PutBucketWebsiteAPI defines the interface for the CreateBucket function.
-// We use this interface to test the function using a mocked service.
-type S3PutBucketWebsiteAPI interface {
 	PutBucketWebsite(ctx context.Context,
 		params *s3.PutBucketWebsiteInput,
 		optFns ...func(*s3.Options)) (*s3.PutBucketWebsiteOutput, error)
 }
+
+// // S3PutBucketWebsiteAPI defines the interface for the CreateBucket function.
+// // We use this interface to test the function using a mocked service.
+// type S3PutBucketWebsiteAPI interface {
+// 	PutBucketWebsite(ctx context.Context,
+// 		params *s3.PutBucketWebsiteInput,
+// 		optFns ...func(*s3.Options)) (*s3.PutBucketWebsiteOutput, error)
+// }
 
 // NewS3Client initializes a new aws s3 client.
 func NewS3Client() (*s3.Client, error) {
@@ -43,7 +46,7 @@ func NewS3Client() (*s3.Client, error) {
 
 // MakeBucket is used to create an s3 bucket with website config
 // input: website name
-func MakeBucket(c context.Context, client *s3.Client, bucketname string) (string, error) {
+func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (string, error) {
 	if bucketname == "" {
 		fmt.Println("You must supply a bucket name.")
 		return "", errors.New("empty  bucket name")
@@ -93,7 +96,7 @@ func MakeBucket(c context.Context, client *s3.Client, bucketname string) (string
 // Output:
 //     If success, a CreateBucketOutput object containing the result of the service call and nil.
 //     Otherwise, nil and an error from the call to CreateBucket.
-func createBucket(c context.Context, api S3CreateBucketAPI, input *s3.CreateBucketInput) (*s3.CreateBucketOutput, error) {
+func createBucket(c context.Context, api S3BucketAPI, input *s3.CreateBucketInput) (*s3.CreateBucketOutput, error) {
 	return api.CreateBucket(c, input)
 }
 
@@ -104,6 +107,6 @@ func createBucket(c context.Context, api S3CreateBucketAPI, input *s3.CreateBuck
 // Output:
 //     If success, a CreateBucketOutput object containing the result of the service call and nil.
 //     Otherwise, nil and an error from the call to CreateBucket.
-func putBucketConfg(c context.Context, bucketname string, api S3PutBucketWebsiteAPI, input *s3.PutBucketWebsiteInput) (*s3.PutBucketWebsiteOutput, error) {
+func putBucketConfg(c context.Context, bucketname string, api S3BucketAPI, input *s3.PutBucketWebsiteInput) (*s3.PutBucketWebsiteOutput, error) {
 	return api.PutBucketWebsite(c, input)
 }
