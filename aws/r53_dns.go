@@ -11,21 +11,24 @@ import (
 	r53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 )
 
-// R53CreateHostedZoneAPI defines the interface for the CreateHostedZone function.
+// R53API defines the interface for the CreateHostedZone function.
 // We use this interface to test the function using a mocked service.
-type R53CreateHostedZoneAPI interface {
-	CreateHostedZone(ctx context.Context,
-		params *r53.CreateHostedZoneInput,
-		optFns ...func(*r53.Options)) (*r53.CreateHostedZoneOutput, error)
-}
-
-// R53ChangeResourceRecordSetsAPI defines the interface for the CreateHostedZone function.
-// We use this interface to test the function using a mocked service.
-type R53ChangeResourceRecordSetsAPI interface {
+type R53API interface {
 	ChangeResourceRecordSets(ctx context.Context,
 		params *r53.ChangeResourceRecordSetsInput,
 		optFns ...func(*r53.Options)) (*r53.ChangeResourceRecordSetsOutput, error)
+	// CreateHostedZone(ctx context.Context,
+	// 	params *r53.CreateHostedZoneInput,
+	// 	optFns ...func(*r53.Options)) (*r53.CreateHostedZoneOutput, error)
 }
+
+// // R53ChangeResourceRecordSetsAPI defines the interface for the CreateHostedZone function.
+// // We use this interface to test the function using a mocked service.
+// type R53ChangeResourceRecordSetsAPI interface {
+// 	ChangeResourceRecordSets(ctx context.Context,
+// 		params *r53.ChangeResourceRecordSetsInput,
+// 		optFns ...func(*r53.Options)) (*r53.ChangeResourceRecordSetsOutput, error)
+// }
 
 // NewR53Client initializes a new aws R53 client.
 func NewR53Client() (*r53.Client, error) {
@@ -46,7 +49,7 @@ func NewR53Client() (*r53.Client, error) {
 //    s3 website endpoint (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
 //    dns name of the website
 //    dns zone id
-func MakeRoutes(c context.Context, client *r53.Client, s3websiteendpoint, dnsname, zoneid string) (string, error) {
+func MakeRoutes(c context.Context, client R53API, s3websiteendpoint, dnsname, zoneid string) (string, error) {
 
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
@@ -83,6 +86,6 @@ func hostedZoneIDByS3EndpointRegion(region string) *string {
 	return &zoneid
 }
 
-func createRoute(c context.Context, api R53ChangeResourceRecordSetsAPI, input *r53.ChangeResourceRecordSetsInput, hostedzone string) (*r53.ChangeResourceRecordSetsOutput, error) {
+func createRoute(c context.Context, api R53API, input *r53.ChangeResourceRecordSetsInput, hostedzone string) (*r53.ChangeResourceRecordSetsOutput, error) {
 	return api.ChangeResourceRecordSets(c, input)
 }
