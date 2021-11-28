@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// R53APIImpl is for implementing testable r53 client without calling aws services
 type R53APIImpl struct{}
 
 func (dt R53APIImpl) ChangeResourceRecordSets(ctx context.Context,
