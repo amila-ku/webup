@@ -10,7 +10,7 @@ import (
 	"github.com/aws/smithy-go/middleware"
 	"github.com/stretchr/testify/assert"
 )
-
+// S3BucketImpl is for implementing testable s3 client without calling aws services
 type S3BucketImpl struct{}
 
 func (dt S3BucketImpl) CreateBucket(ctx context.Context,
