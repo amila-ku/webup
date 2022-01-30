@@ -33,5 +33,9 @@ test:
 test-race:
 	go test -race -timeout 60s -v ./...
 
+test-ci:
+	act -l
+	act -n
+
 build: fmt lint
 	rm -f bin/${APPLICATION} && env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/${APPLICATION}
