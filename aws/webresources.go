@@ -25,7 +25,7 @@ func MakeWebResources(c context.Context, webSiteName string) error {
 		log.Fatal(err)
 		return errors.New("Could not create s3 bucket")
 	}
-	log.Println("Bucket created" + bucket)
+	log.Printf("Bucket %s created \n", bucket)
 
 	// creates a R53 client
 	r53client, err := NewR53Client()
@@ -36,13 +36,13 @@ func MakeWebResources(c context.Context, webSiteName string) error {
 	}
 
 	// create route53 rules
-	dns, err := MakeRoutes(c, r53client, "s3-website-eu-west-1.amazonaws.com", webSiteName, "Z1TI4H711TUGO5")
+	dns, err := MakeRoutes(c, r53client, webSiteName, "Z1TI4H711TUGO5")
 	if err != nil {
 		log.Println("Error setting up s3 bucket")
 		log.Fatal(err)
 		return errors.New("Could not create s3 bucket")
 	}
-	log.Println("DNS created" + dns)
+	log.Printf("DNS %s created ", dns)
 
 	return nil
 }

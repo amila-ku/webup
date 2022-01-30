@@ -16,11 +16,12 @@ var createCmd = &cobra.Command{
 	Short: "Creates a new website in AWS",
 	Long:  `Creates a new website for the given dns name.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+		fmt.Println("Starting to set up bucket")
 		err := aws.MakeWebResources(context.TODO(), webSiteName)
 		if err != nil {
 			fmt.Println("failed")
 		}
+		fmt.Println("Done setting up bucket")
 	},
 }
 

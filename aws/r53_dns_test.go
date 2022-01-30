@@ -19,7 +19,7 @@ func (dt R53APIImpl) ChangeResourceRecordSets(ctx context.Context,
 	optFns ...func(*r53.Options)) (*r53.ChangeResourceRecordSetsOutput, error) {
 
 	output := &r53.ChangeResourceRecordSetsOutput{
-		ChangeInfo: &r53types.ChangeInfo{},
+		ChangeInfo:     &r53types.ChangeInfo{},
 		ResultMetadata: middleware.Metadata{},
 	}
 
@@ -29,7 +29,7 @@ func (dt R53APIImpl) ChangeResourceRecordSets(ctx context.Context,
 
 func TestMakeRoutes(t *testing.T) {
 	api := &R53APIImpl{}
-	_, err := MakeRoutes(context.TODO(), api, "s3-website-eu-west-1.amazonaws.com", "abc-test.com", "Z1TI4H711TUAOG")
+	_, err := MakeRoutes(context.TODO(), api, "abc-test.com", "Z1TI4H711TUAOG")
 	if err != nil {
 		fmt.Println("failed")
 	}
