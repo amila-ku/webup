@@ -11,6 +11,10 @@ import (
 	r53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 )
 
+//S3WebSiteEndPointEuCentral1 is the s3 endpoint for eu-central-1
+//s3-website.eu-central-1.amazonaws.com
+const S3WebSiteEndPointEuCentral1 = ".s3-website.eu-central-1.amazonaws.com"
+
 // R53API defines the interface for the CreateHostedZone function.
 // We use this interface to test the function using a mocked service.
 type R53API interface {
@@ -49,8 +53,9 @@ func NewR53Client() (*r53.Client, error) {
 //    s3 website endpoint (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
 //    dns name of the website
 //    dns zone id
-func MakeRoutes(c context.Context, client R53API, s3websiteendpoint, dnsname, zoneid string) (string, error) {
-
+// example endpoint http://www.testwebsite.devops.lk.s3-website.eu-central-1.amazonaws.com
+func MakeRoutes(c context.Context, client R53API, dnsname, zoneid string) (string, error) {
+	s3websiteendpoint := dnsname + S3WebSiteEndPointEuCentral1
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
 			Changes: []r53types.Change{
