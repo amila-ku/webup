@@ -7,8 +7,8 @@ import (
 )
 
 // MakeWebResources is used to create an s3 bucket with website config and add required dns entries in Route53
-// input: website name
-func MakeWebResources(c context.Context, webSiteName string) error {
+// input: website name, route 53 hosted zone id
+func MakeWebResources(c context.Context, webSiteName string, route53HostedZoneID string) error {
 
 	// creates a s3 client
 	s3client, err := NewS3Client()
@@ -36,7 +36,8 @@ func MakeWebResources(c context.Context, webSiteName string) error {
 	}
 
 	// create route53 rules
-	dns, err := MakeRoutes(c, r53client, webSiteName, "Z1TI4H711TUGO5")
+	// example hosted zone value "Z1TI4H711TUGO5"
+	dns, err := MakeRoutes(c, r53client, webSiteName, route53HostedZoneID)
 	if err != nil {
 		log.Println("Error setting up s3 bucket")
 		log.Fatal(err)
