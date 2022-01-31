@@ -23,7 +23,7 @@ func (dt S3BucketImpl) CreateBucket(ctx context.Context,
 	}
 
 	return output, nil
-	//return output, errors.New("random error")
+
 }
 
 func (dt S3BucketImpl) PutBucketWebsite(ctx context.Context,
@@ -35,15 +35,13 @@ func (dt S3BucketImpl) PutBucketWebsite(ctx context.Context,
 	}
 
 	return output, nil
-	//return output, errors.New("random error")
+
 }
 
 func TestMakeBucket(t *testing.T) {
 	api := &S3BucketImpl{}
 
 	_, err := MakeBucket(context.TODO(), api, "abc.com")
-	if err != nil {
-		fmt.Println("failed")
-	}
+
 	assert.Nil(t, err)
 }
