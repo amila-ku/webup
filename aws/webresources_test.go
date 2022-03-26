@@ -4,9 +4,7 @@ import (
 	"context"
 	"testing"
 
-	// r53 "github.com/aws/aws-sdk-go-v2/service/route53"
-	// r53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
-	// "github.com/aws/smithy-go/middleware"
+
 	"github.com/stretchr/testify/assert"
 )
 

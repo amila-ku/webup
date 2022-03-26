@@ -2,7 +2,6 @@ package aws
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
@@ -30,8 +29,6 @@ func (dt R53APIImpl) ChangeResourceRecordSets(ctx context.Context,
 func TestMakeRoutes(t *testing.T) {
 	api := &R53APIImpl{}
 	_, err := MakeRoutes(context.TODO(), api, "abc-test.com", "Z1TI4H711TUAOG")
-	if err != nil {
-		fmt.Println("failed")
-	}
+
 	assert.Nil(t, err)
 }
