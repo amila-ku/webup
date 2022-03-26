@@ -2,7 +2,6 @@ package aws
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
