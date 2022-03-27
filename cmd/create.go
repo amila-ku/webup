@@ -17,7 +17,7 @@ var createCmd = &cobra.Command{
 	Long:  `Creates a new website for the given dns name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Starting to set up bucket")
-		err := aws.MakeWebResources(context.TODO(), webSiteName, route53HostedZoneID)
+		err := aws.NewWebResources(context.TODO(), webSiteName, route53HostedZoneID)
 		if err != nil {
 			fmt.Println("failed")
 		}
