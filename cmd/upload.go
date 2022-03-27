@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/amila-ku/webup/aws"
 	"github.com/spf13/cobra"
 )
 
@@ -18,11 +20,18 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("upload called")
+		err := aws.UploadContent(context.TODO(),webSiteName)
+		if err != nil {
+			fmt.Println("failed uploading content")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(uploadCmd)
+
+
+	createCmd.Flags().StringVarP(&webSiteName, "domain-name", "n", "", "Web site name")
 
 	// Here you will define your flags and configuration settings.
 

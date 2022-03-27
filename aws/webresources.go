@@ -8,7 +8,7 @@ import (
 
 // MakeWebResources is used to create an s3 bucket with website config and add required dns entries in Route53
 // input: website name, route 53 hosted zone id
-func MakeWebResources(c context.Context, webSiteName string, route53HostedZoneID string) error {
+func NewWebResources(c context.Context, webSiteName string, route53HostedZoneID string) error {
 
 	// creates a s3 client
 	s3client, err := NewS3Client()
@@ -47,3 +47,21 @@ func MakeWebResources(c context.Context, webSiteName string, route53HostedZoneID
 
 	return nil
 }
+
+// UploadContent is used to upload a file to a s3 bucket with website config.
+// input: website name
+func UploadContent(c context.Context, webSiteName string) error {
+
+	// creates a s3 client
+	s3client, err := NewS3Client()
+	if err != nil {
+		log.Println("Could not create s3 client")
+		log.Fatal(err)
+		return errors.New("Could not connect to aws s3")
+	}
+
+	err = UploadFile(c, s3client, "upload/index.html", webSiteName)
+
+	return nil
+}
+

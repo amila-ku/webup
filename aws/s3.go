@@ -3,15 +3,15 @@ package aws
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"log"
+	"os"
 )
 
-// S3BucketAPI defines the interface for the CreateBucket function.
+// S3BucketAPI defines the interface for the S3 functionaliteis with Create Bucket, PutBucketWebiste, PutObject functions.
 // We use this interface to test the function using a mocked service.
 type S3BucketAPI interface {
 	CreateBucket(ctx context.Context,
@@ -20,7 +20,18 @@ type S3BucketAPI interface {
 	PutBucketWebsite(ctx context.Context,
 		params *s3.PutBucketWebsiteInput,
 		optFns ...func(*s3.Options)) (*s3.PutBucketWebsiteOutput, error)
+	PutObject(ctx context.Context,
+		params *s3.PutObjectInput,
+		optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 }
+
+// S3PutObjectAPI defines the interface for the PutObject function.
+// We use this interface to test the function using a mocked service.
+// type S3PutObjectAPI interface {
+// 	PutObject(ctx context.Context,
+// 		params *s3.PutObjectInput,
+// 		optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+// }
 
 // // S3PutBucketWebsiteAPI defines the interface for the CreateBucket function.
 // // We use this interface to test the function using a mocked service.
@@ -48,7 +59,7 @@ func NewS3Client() (*s3.Client, error) {
 // input: website name
 func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (string, error) {
 	if bucketname == "" {
-		fmt.Println("You must supply a bucket name.")
+		log.Println("You must supply a bucket name.")
 		return "", errors.New("empty  bucket name")
 	}
 	input := &s3.CreateBucketInput{
@@ -79,13 +90,40 @@ func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (strin
 
 	_, err = putBucketConfg(c, bucketname, client, webinput)
 	if err != nil {
-		fmt.Println("bucket " + bucketname + " updated with website configuration")
-		fmt.Println(err)
+		log.Println("bucket " + bucketname + " updated with website configuration")
+		log.Println(err)
 		return "", errors.New("Could not update s3 bucket")
 	}
 
 	return bucketname, nil
 
+}
+
+
+func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname string) error {
+	if bucketname == "" || filename == "" {
+		log.Println("You must supply a bucket name (-b BUCKET) and file name (-f FILE)")
+		return errors.New("websitename or filename not suplied")
+	}
+
+	file, err := os.Open(filename)
+
+	if err != nil {
+		log.Println("Unable to open file " + filename)
+		return err
+	}
+
+	defer file.Close()
+
+	input := &s3.PutObjectInput{
+		Bucket: &bucketname,
+		Key:    &filename,
+		Body:   file,
+	}
+
+	putFile(c, client, input )
+
+	return nil
 }
 
 // createBucket creates an Amazon Simple Storage Service (Amazon S3) bucket.
@@ -109,4 +147,16 @@ func createBucket(c context.Context, api S3BucketAPI, input *s3.CreateBucketInpu
 //     Otherwise, nil and an error from the call to CreateBucket.
 func putBucketConfg(c context.Context, bucketname string, api S3BucketAPI, input *s3.PutBucketWebsiteInput) (*s3.PutBucketWebsiteOutput, error) {
 	return api.PutBucketWebsite(c, input)
+}
+
+// putFile uploads a file to an Amazon Simple Storage Service (Amazon S3) bucket
+// Inputs:
+//     c is the context of the method call, which includes the AWS Region
+//     api is the interface that defines the method call
+//     input defines the input arguments to the service call.
+// Output:
+//     If success, a PutObjectOutput object containing the result of the service call and nil
+//     Otherwise, nil and an error from the call to PutObject
+func putFile(c context.Context, api S3BucketAPI, input *s3.PutObjectInput) (*s3.PutObjectOutput, error) {
+	return api.PutObject(c, input)
 }
