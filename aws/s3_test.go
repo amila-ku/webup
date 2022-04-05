@@ -36,6 +36,18 @@ func (dt S3BucketImpl) PutBucketWebsite(ctx context.Context,
 
 }
 
+func (dt S3BucketImpl) PutObject(ctx context.Context,
+	params *s3.PutObjectInput,
+	optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
+
+	output := &s3.PutObjectOutput{
+		ResultMetadata: middleware.Metadata{},
+	}
+
+	return output, nil
+
+}
+
 func TestMakeBucket(t *testing.T) {
 	api := &S3BucketImpl{}
 
