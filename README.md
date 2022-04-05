@@ -1,6 +1,6 @@
 # webup
 
-![Build Status](https://github.com/amila-ku/webup/workflows/Go/badge.svg)
+![Build Status](https://github.com/amila-ku/webup/actions/workflows/build.yaml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/amila-ku/webup)](https://goreportcard.com/report/github.com/amila-ku/webup)
 
 S3 is a very cost effective way to host static web content, but it requires multiple configuration changes to properly prepare a s3 bucket for web hosting. This is a simple cli tool to make it easier to prepare s3 bucket for static website hosting.
