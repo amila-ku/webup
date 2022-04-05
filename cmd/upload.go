@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/amila-ku/webup/aws"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +19,10 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("upload called")
+		err := aws.UploadContent(context.TODO(), webSiteName)
+		if err != nil {
+			fmt.Println("failed uploading content")
+		}
 	},
 }
 
@@ -33,4 +38,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// uploadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	createCmd.Flags().StringVarP(&webSiteName, "website-name", "w", "", "Web site name")
 }

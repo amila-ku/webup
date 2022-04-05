@@ -8,24 +8,27 @@ import (
 
 // MakeWebResources is used to create an s3 bucket with website config and add required dns entries in Route53
 // input: website name, route 53 hosted zone id
-func MakeWebResources(c context.Context, webSiteName string, route53HostedZoneID string) error {
+func NewWebResources(c context.Context, webSiteName string, route53HostedZoneID string, skipBucketCreation bool) error {
 
-	// creates a s3 client
-	s3client, err := NewS3Client()
-	if err != nil {
-		log.Println("Could not create s3 client")
-		log.Fatal(err)
-		return errors.New("Could not connect to aws s3")
-	}
+	// creates s3 bucket if skip bucket creation is not true
+	if !skipBucketCreation {
+		// creates a s3 client
+		s3client, err := NewS3Client()
+		if err != nil {
+			log.Println("Could not create s3 client")
+			log.Fatal(err)
+			return errors.New("Could not connect to aws s3")
+		}
 
-	// creates s3 bucket and setup bucket for webhosting
-	bucket, err := MakeBucket(c, s3client, webSiteName)
-	if err != nil {
-		log.Println("Error setting up s3 bucket")
-		log.Fatal(err)
-		return errors.New("Could not create s3 bucket")
+		// creates s3 bucket and setup bucket for webhosting
+		bucket, err := MakeBucket(c, s3client, webSiteName)
+		if err != nil {
+			log.Println("Error setting up s3 bucket")
+			log.Fatal(err)
+			return errors.New("Could not create s3 bucket")
+		}
+		log.Printf("Bucket %s created \n", bucket)
 	}
-	log.Printf("Bucket %s created \n", bucket)
 
 	// creates a R53 client
 	r53client, err := NewR53Client()
@@ -39,11 +42,32 @@ func MakeWebResources(c context.Context, webSiteName string, route53HostedZoneID
 	// example hosted zone value "Z1TI4H711TUGO5"
 	dns, err := MakeRoutes(c, r53client, webSiteName, route53HostedZoneID)
 	if err != nil {
-		log.Println("Error setting up s3 bucket")
+		log.Println("Error setting up R53 entries for " + webSiteName)
 		log.Fatal(err)
 		return errors.New("Could not create s3 bucket")
 	}
 	log.Printf("DNS %s created ", dns)
+
+	return nil
+}
+
+// UploadContent is used to upload a file to a s3 bucket with website config.
+// input: website name
+func UploadContent(c context.Context, webSiteName string) error {
+
+	// creates a s3 client
+	s3client, err := NewS3Client()
+	if err != nil {
+		log.Println("Could not create s3 client")
+		log.Fatal(err)
+		return errors.New("Could not connect to aws s3")
+	}
+
+	err = UploadFile(c, s3client, "webcontent/index.html", webSiteName)
+	if err != nil {
+		log.Fatal(err)
+		return errors.New("Could not upload to aws s3")
+	}
 
 	return nil
 }

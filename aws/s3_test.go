@@ -2,11 +2,11 @@ package aws
 
 import (
 	"context"
-	"testing"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 // S3BucketImpl is for implementing testable s3 client without calling aws services
@@ -29,6 +29,18 @@ func (dt S3BucketImpl) PutBucketWebsite(ctx context.Context,
 	optFns ...func(*s3.Options)) (*s3.PutBucketWebsiteOutput, error) {
 
 	output := &s3.PutBucketWebsiteOutput{
+		ResultMetadata: middleware.Metadata{},
+	}
+
+	return output, nil
+
+}
+
+func (dt S3BucketImpl) PutObject(ctx context.Context,
+	params *s3.PutObjectInput,
+	optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
+
+	output := &s3.PutObjectOutput{
 		ResultMetadata: middleware.Metadata{},
 	}
 

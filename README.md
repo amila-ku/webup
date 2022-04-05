@@ -1,4 +1,8 @@
 # webup
+
+![Build Status](https://github.com/amila-ku/webup/workflows/Go/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/amila-ku/webup)](https://goreportcard.com/report/github.com/amila-ku/webup)
+
 S3 is a very cost effective way to host static web content, but it requires multiple configuration changes to properly prepare a s3 bucket for web hosting. This is a simple cli tool to make it easier to prepare s3 bucket for static website hosting.
 
 ## What it does
@@ -9,10 +13,11 @@ S3 is a very cost effective way to host static web content, but it requires mult
 ## How to create a s3 buckt ready for webhosting.
 
 ```
-webup create -n www.testwebsite.devops.lk
+webup create -n www.testwebsite.devops.lk -z Z1TI4H711TUXXX
 Starting to set up bucket
-2022/01/30 16:22:40 Bucket created www.testwebsite.devops.lk
-2022/01/30 16:22:41 DNS created www.testwebsite.devops.lk
+2022/04/05 21:52:13 Bucket www.testwebsite.devops.lk created 
+2022/04/05 21:52:14 DNS www.testwebsite.devops.lk created 
+Done setting up bucket
 ```
 
 
