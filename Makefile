@@ -19,8 +19,8 @@ fmt:
 	fi
 
 lint:
-	@echo staticcheck ./...
-	@OUTPUT=`staticcheck ./... 2>&1 | grep -v ^vendor/`; \
+	@echo golangci-lint run ./...
+	@OUTPUT=`golangci-lint run ./... 2>&1 | grep -v ^vendor/`; \
 	if [ "$$OUTPUT" ]; then \
 		echo "staticcheck errors:"; \
 		echo "$$OUTPUT"; \
@@ -37,7 +37,7 @@ test-ci:
 	act -l
 	act -n
 
-build: fmt
+build: fmt lint
 	rm -f bin/${APPLICATION} && env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/${APPLICATION}
 
 run: 

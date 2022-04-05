@@ -120,7 +120,12 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 		Body:   file,
 	}
 
-	putFile(c, client, input)
+	st, err := putFile(c, client, input)
+	if err != nil {
+		log.Fatalln("Unable to upload file " + filename)
+		return err
+	}
+	log.Println(st)
 
 	return nil
 }

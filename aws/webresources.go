@@ -63,7 +63,11 @@ func UploadContent(c context.Context, webSiteName string) error {
 		return errors.New("Could not connect to aws s3")
 	}
 
-	err = UploadFile(c, s3client, "upload/index.html", webSiteName)
+	err = UploadFile(c, s3client, "webcontent/index.html", webSiteName)
+	if err != nil {
+		log.Fatal(err)
+		return errors.New("Could not upload to aws s3")
+	}
 
 	return nil
 }
