@@ -6,7 +6,7 @@ GOOS ?= linux
 GOARCH ?= amd64
 
 .DEFAULT_GOAL := build
-.PHONY: fmt lint test test-race test-coverage sonar-qube build run-local image-build image-push
+.PHONY: fmt lint test test-race test-ci build run
 
 # Capture output and force failure when there is non-empty output
 fmt:
@@ -19,10 +19,10 @@ fmt:
 	fi
 
 lint:
-	@echo golint ./...
-	@OUTPUT=`golint ./... 2>&1 | grep -v ^vendor/`; \
+	@echo staticcheck ./...
+	@OUTPUT=`staticcheck ./... 2>&1 | grep -v ^vendor/`; \
 	if [ "$$OUTPUT" ]; then \
-		echo "golint errors:"; \
+		echo "staticcheck errors:"; \
 		echo "$$OUTPUT"; \
 		exit 1; \
 	fi
@@ -37,5 +37,8 @@ test-ci:
 	act -l
 	act -n
 
-build: fmt lint
+build: fmt
 	rm -f bin/${APPLICATION} && env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/${APPLICATION}
+
+run: 
+	bin/${APPLICATION}
