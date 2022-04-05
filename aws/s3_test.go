@@ -2,11 +2,11 @@ package aws
 
 import (
 	"context"
-	"testing"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go/middleware"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 // S3BucketImpl is for implementing testable s3 client without calling aws services

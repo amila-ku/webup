@@ -71,9 +71,9 @@ func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (strin
 
 	_, err := createBucket(c, client, input)
 	if err != nil {
-		log.Println("Could not create bucket " + bucketname)
-		log.Fatal(err)
-		return "", errors.New("Could not create s3 bucket")
+		// log.Println("Could not create bucket " + bucketname)
+		// log.Fatal(err)
+		return "", err
 	}
 
 	webinput := &s3.PutBucketWebsiteInput{
@@ -92,13 +92,12 @@ func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (strin
 	if err != nil {
 		log.Println("bucket " + bucketname + " updated with website configuration")
 		log.Println(err)
-		return "", errors.New("Could not update s3 bucket")
+		return "", err
 	}
 
 	return bucketname, nil
 
 }
-
 
 func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname string) error {
 	if bucketname == "" || filename == "" {
@@ -121,7 +120,7 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 		Body:   file,
 	}
 
-	putFile(c, client, input )
+	putFile(c, client, input)
 
 	return nil
 }
