@@ -106,6 +106,7 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 	}
 
 	file, err := os.Open(filename)
+	log.Printf("Opened file: %s", filename)
 
 	if err != nil {
 		log.Println("Unable to open file " + filename)
@@ -114,18 +115,26 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 
 	defer file.Close()
 
+	filename = "index.html"
+
+	// set ACL and other parameters according to
+	// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3#PutObjectInput
+	// more on Canned ACL : https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 	input := &s3.PutObjectInput{
 		Bucket: &bucketname,
 		Key:    &filename,
 		Body:   file,
+		ACL:    types.ObjectCannedACLPublicRead,
 	}
+
+	log.Printf("Trying to upload file: %s to s3", filename)
 
 	st, err := putFile(c, client, input)
 	if err != nil {
 		log.Fatalln("Unable to upload file " + filename)
 		return err
 	}
-	log.Println(st)
+	log.Printf("Uploaded file: %s to s3, object ETag: %v\n", filename, st.ETag)
 
 	return nil
 }

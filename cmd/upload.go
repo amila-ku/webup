@@ -39,5 +39,5 @@ func init() {
 	// is called directly, e.g.:
 	// uploadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	createCmd.Flags().StringVarP(&webSiteName, "website-name", "w", "", "Web site name")
+	uploadCmd.Flags().StringVarP(&webSiteName, "website-name", "w", "", "Web site name")
 }
