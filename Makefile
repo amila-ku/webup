@@ -37,7 +37,7 @@ test-ci:
 	act -l
 	act -n
 
-build: fmt lint
+build: fmt
 	rm -f bin/${APPLICATION} && env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/${APPLICATION}
 
 run: 

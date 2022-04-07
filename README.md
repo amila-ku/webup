@@ -20,6 +20,21 @@ Starting to set up bucket
 Done setting up bucket
 ```
 
+### How to upload content
+
+```
+webup upload -w  www.testwebsiteamilaku870306.devops.lk
+```
+
+output
+
+```
+2022/04/08 00:12:20  create s3 client new s3 upload
+2022/04/08 00:12:20 Opened file: webcontent/index.html
+2022/04/08 00:12:20 Trying to upload file: index.html to s3
+2022/04/08 00:12:21 Upload file: index.html to s3, object version: 0xc000550020
+```
+
 
 ## Functionality
 
@@ -28,3 +43,10 @@ Done setting up bucket
 - create r53 entries
 - initialize directory upload content
 - upload files to s3
+
+
+# Todo
+
+- Upload content
+
+This currently only updates index.html file in webcontent folder and sets public access ACL in S3 bucket, it needs to be able to upload any file available in webcontent folder.
