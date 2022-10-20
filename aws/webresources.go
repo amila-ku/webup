@@ -71,3 +71,22 @@ func UploadContent(c context.Context, webSiteName string) error {
 
 	return nil
 }
+
+// UploadContentFolder is used to upload multiple files to a s3 bucket with website config.
+// input: website name
+func UploadContentFolder(c context.Context, uploadPath, webSiteName string) error {
+
+	// creates a s3 client
+	s3client, err := NewS3Client()
+	if err != nil {
+		return errors.New("Could not create  aws s3 client")
+	}
+
+	err = UploadFolder(c, s3client, uploadPath, webSiteName)
+	if err != nil {
+		log.Fatal(err)
+		return errors.New("Could not upload folder content to aws s3")
+	}
+
+	return nil
+}
