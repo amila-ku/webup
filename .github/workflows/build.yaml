@@ -43,10 +43,11 @@ jobs:
         run: go test -race -coverprofile=coverage.txt -covermode=atomic
       
       - name: Upload Coverage report to CodeCov
-        uses: codecov/codecov-action@v1.0.0
+        uses: codecov/codecov-action@v3
         with:
           token: ${{secrets.CODECOV_TOKEN}}
-          file: ./coverage.txt
+          files: ./coverage1.xml,./coverage2.xml
+          verbose: true
           
   build:
     name: Build
