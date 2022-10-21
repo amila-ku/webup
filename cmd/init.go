@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/amila-ku/webup/bootstrap"
 	fs "github.com/amila-ku/webup/filesystem"
 	"github.com/spf13/cobra"
 )
@@ -21,6 +22,11 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("initialize a directory with basic web page")
 		err := fs.CreateDirectory("webcontent")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = bootstrap.SetUpBasicWebSite("testweb")
 		if err != nil {
 			log.Fatal(err)
 		}
