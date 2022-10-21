@@ -26,6 +26,12 @@ Done setting up bucket
 webup upload -w  www.testwebsiteamilaku870306.devops.lk
 ```
 
+### How to upload folder with all content
+
+```
+webup upload -r true -w  www.testwebsiteamilaku870306.devops.lk
+```
+
 output
 
 ```

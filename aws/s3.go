@@ -5,10 +5,12 @@ import (
 	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // S3BucketAPI defines the interface for the S3 functionaliteis with Create Bucket, PutBucketWebiste, PutObject functions.
@@ -137,6 +139,79 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 	log.Printf("Uploaded file: %s to s3, object ETag: %v\n", filename, st.ETag)
 
 	return nil
+}
+
+// fileWalk is used for identifying files in a given path excluding directories
+type fileWalk chan string
+
+func (f fileWalk) Walk(path string, info os.FileInfo, err error) error {
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		f <- path
+	}
+	return nil
+}
+
+// UploadFolder implemnted using https://aws.github.io/aws-sdk-go-v2/docs/sdk-utilities/s3/
+func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname string) error {
+	if bucketname == "" || localPath == "" {
+		return errors.New("Bucket name (-b BUCKET) and file name (-f FILE) is required")
+	}
+
+	walker := make(fileWalk)
+	go func() {
+		// Gather the files to upload by walking the path recursively
+		if err := filepath.Walk(localPath, walker.Walk); err != nil {
+			log.Fatalln("Walk failed:", err)
+		}
+		close(walker)
+	}()
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatalln("error:", err)
+	}
+
+	// prefix, err := os.Getwd()
+	// if err != nil {
+	// 	log.Println("Failed getting current path", err)
+	// 	prefix = ""
+
+	// }
+	prefix := ""
+
+	// For each file found walking, upload it to Amazon S3
+	uploader := manager.NewUploader(s3.NewFromConfig(cfg))
+	for path := range walker {
+		rel, err := filepath.Rel(localPath, path)
+		if err != nil {
+			log.Fatalln("Unable to get relative path:", path, err)
+			return err
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			log.Println("Failed opening file", path, err)
+			continue
+		}
+		defer file.Close()
+		result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
+			Bucket: &bucketname,
+			Key:    aws.String(filepath.Join(prefix, rel)),
+			Body:   file,
+			// more on Canned ACL : https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
+			ACL: types.ObjectCannedACLPublicRead,
+		})
+		if err != nil {
+			log.Fatalln("Failed to upload", path, err)
+			continue
+		}
+		log.Println("Uploaded", path, result.Location)
+	}
+
+	return nil
+
 }
 
 // createBucket creates an Amazon Simple Storage Service (Amazon S3) bucket.
