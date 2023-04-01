@@ -195,7 +195,6 @@ func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname s
 			log.Println("Failed opening file", path, err)
 			continue
 		}
-		defer file.Close()
 		result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
 			Bucket: &bucketname,
 			Key:    aws.String(filepath.Join(prefix, rel)),
@@ -207,6 +206,7 @@ func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname s
 			log.Fatalln("Failed to upload", path, err)
 			continue
 		}
+		file.Close()
 		log.Println("Uploaded", path, result.Location)
 	}
 

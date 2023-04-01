@@ -8,10 +8,7 @@ import (
 
 func commandExists(cmd string) bool {
 	_, err := exec.LookPath(cmd)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func isHugoInstalled() bool {
