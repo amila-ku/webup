@@ -216,35 +216,44 @@ func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname s
 
 // createBucket creates an Amazon Simple Storage Service (Amazon S3) bucket.
 // Inputs:
-//     c is the context of the method call, which includes the AWS Region
-//     api is the interface that defines the method call
-//     input defines the input arguments to the service call.
+//
+//	c is the context of the method call, which includes the AWS Region
+//	api is the interface that defines the method call
+//	input defines the input arguments to the service call.
+//
 // Output:
-//     If success, a CreateBucketOutput object containing the result of the service call and nil.
-//     Otherwise, nil and an error from the call to CreateBucket.
+//
+//	If success, a CreateBucketOutput object containing the result of the service call and nil.
+//	Otherwise, nil and an error from the call to CreateBucket.
 func createBucket(c context.Context, api S3BucketAPI, input *s3.CreateBucketInput) (*s3.CreateBucketOutput, error) {
 	return api.CreateBucket(c, input)
 }
 
 // putBucketConfig creates an Amazon Simple Storage Service (Amazon S3) bucket configuration.
 // Inputs:
-//     c is the context of the method call, which includes the AWS Region
-//     bucketname is the s3 resource name configuration is to be applied
+//
+//	c is the context of the method call, which includes the AWS Region
+//	bucketname is the s3 resource name configuration is to be applied
+//
 // Output:
-//     If success, a CreateBucketOutput object containing the result of the service call and nil.
-//     Otherwise, nil and an error from the call to CreateBucket.
+//
+//	If success, a CreateBucketOutput object containing the result of the service call and nil.
+//	Otherwise, nil and an error from the call to CreateBucket.
 func putBucketConfg(c context.Context, bucketname string, api S3BucketAPI, input *s3.PutBucketWebsiteInput) (*s3.PutBucketWebsiteOutput, error) {
 	return api.PutBucketWebsite(c, input)
 }
 
 // putFile uploads a file to an Amazon Simple Storage Service (Amazon S3) bucket
 // Inputs:
-//     c is the context of the method call, which includes the AWS Region
-//     api is the interface that defines the method call
-//     input defines the input arguments to the service call.
+//
+//	c is the context of the method call, which includes the AWS Region
+//	api is the interface that defines the method call
+//	input defines the input arguments to the service call.
+//
 // Output:
-//     If success, a PutObjectOutput object containing the result of the service call and nil
-//     Otherwise, nil and an error from the call to PutObject
+//
+//	If success, a PutObjectOutput object containing the result of the service call and nil
+//	Otherwise, nil and an error from the call to PutObject
 func putFile(c context.Context, api S3BucketAPI, input *s3.PutObjectInput) (*s3.PutObjectOutput, error) {
 	return api.PutObject(c, input)
 }
