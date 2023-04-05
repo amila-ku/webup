@@ -19,8 +19,8 @@ fmt:
 	fi
 
 lint:
-	@echo golangci-lint run ./...
-	@OUTPUT=`golangci-lint run ./... 2>&1 | grep -v ^vendor/`; \
+	@echo staticcheck ./...
+	@OUTPUT=`staticcheck ./... 2>&1 | grep -v ^vendor/`; \
 	if [ "$$OUTPUT" ]; then \
 		echo "staticcheck errors:"; \
 		echo "$$OUTPUT"; \

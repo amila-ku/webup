@@ -157,7 +157,7 @@ func (f fileWalk) Walk(path string, info os.FileInfo, err error) error {
 // UploadFolder implemnted using https://aws.github.io/aws-sdk-go-v2/docs/sdk-utilities/s3/
 func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname string) error {
 	if bucketname == "" || localPath == "" {
-		return errors.New("Bucket name (-b BUCKET) and file name (-f FILE) is required")
+		return errors.New("bucket name (-b BUCKET) and file name (-f FILE) is required")
 	}
 
 	walker := make(fileWalk)

@@ -79,7 +79,7 @@ func UploadContentFolder(c context.Context, uploadPath, webSiteName string) erro
 	// creates a s3 client
 	s3client, err := NewS3Client()
 	if err != nil {
-		return errors.New("Could not create  aws s3 client")
+		return errors.New("could not create  aws s3 client")
 	}
 
 	err = UploadFolder(c, s3client, uploadPath, webSiteName)
