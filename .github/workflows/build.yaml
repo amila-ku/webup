@@ -22,10 +22,9 @@ jobs:
         run: gofmt -s .
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
+        uses: dominikh/staticcheck-action@v1.2.0
         with:
-          args: -v
-          version: v1.45
+          version: latest
 
   test:
     name: Test
