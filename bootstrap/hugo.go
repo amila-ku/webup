@@ -8,10 +8,7 @@ import (
 
 func commandExists(cmd string) bool {
 	_, err := exec.LookPath(cmd)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func isHugoInstalled() bool {
@@ -20,7 +17,7 @@ func isHugoInstalled() bool {
 
 func initiateHugoWebSite(websitename string) error {
 	if !isHugoInstalled() {
-		return errors.New("Hugo not installed, please install hugo and retry https://gohugo.io/getting-started/quick-start/#step-1-install-hugo")
+		return errors.New("hugo not installed, please install hugo and retry https://gohugo.io/getting-started/quick-start/#step-1-install-hugo")
 	}
 
 	cmd := exec.Command("hugo", "new", "site", websitename)
