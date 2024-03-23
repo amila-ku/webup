@@ -48,10 +48,34 @@ func (dt S3BucketImpl) PutObject(ctx context.Context,
 
 }
 
+func (dt S3BucketImpl) DeletePublicAccessBlock(ctx context.Context,
+	params *s3.DeletePublicAccessBlockInput,
+	optFns ...func(*s3.Options)) (*s3.DeletePublicAccessBlockOutput, error) {
+
+	output := &s3.DeletePublicAccessBlockOutput{
+		ResultMetadata: middleware.Metadata{},
+	}
+
+	return output, nil
+
+}
+
+func (dt S3BucketImpl) PutBucketAcl(ctx context.Context,
+	params *s3.PutBucketAclInput,
+	optFns ...func(*s3.Options)) (*s3.PutBucketAclOutput, error) {
+
+	output := &s3.PutBucketAclOutput{
+		ResultMetadata: middleware.Metadata{},
+	}
+
+	return output, nil
+
+}
+
 func TestMakeBucket(t *testing.T) {
 	api := &S3BucketImpl{}
 
-	_, err := MakeBucket(context.TODO(), api, "abc.com")
+	_, err := MakeBucket(context.TODO(), api, "abc.com", "eu-west-1")
 
 	assert.Nil(t, err)
 }

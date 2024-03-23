@@ -14,7 +14,7 @@ var skipBucketCreation bool
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Creates a new website in AWS",
+	Short: "Creates a new website in AWS S3",
 	Long:  `Creates a new website for the given dns name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Starting to set up bucket")

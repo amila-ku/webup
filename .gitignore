@@ -1,3 +1,4 @@
 webcontent/
 bin/
 testweb/
+*.txt
