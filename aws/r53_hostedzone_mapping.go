@@ -3,6 +3,7 @@ package aws
 // HostedZoneID represents aws s3 hostedzoneids
 type HostedZoneID string
 
+// Hosted zone mapping is available in https://docs.aws.amazon.com/general/latest/gr/s3.html
 const (
 	//USEast1HostedZoneID is the s3 web endpoint hosted zone id
 	USEast1HostedZoneID HostedZoneID = "Z3AQBSTGFYJSTF"
@@ -20,4 +21,5 @@ const (
 
 var zonemap = map[string]HostedZoneID{
 	"eu-central-1": EUCentralHostedZoneID,
+	"eu-west-1": EUWestHostedZoneID,
 }

@@ -13,7 +13,7 @@ var isFolderUploadEnabled bool
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
-	Short: "A brief description of your command",
+	Short: "uploads website content to s3 bucket",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 

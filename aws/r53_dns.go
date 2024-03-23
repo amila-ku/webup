@@ -13,7 +13,15 @@ import (
 
 // S3WebSiteEndPointEuCentral1 is the s3 endpoint for eu-central-1
 // s3-website.eu-central-1.amazonaws.com
-const S3WebSiteEndPointEuCentral1 = ".s3-website.eu-central-1.amazonaws.com"
+const (
+	S3WebSiteEndPointEuCentral1 = ".s3-website.eu-central-1.amazonaws.com"
+	S3WebSiteEndPointEuWest1 = ".s3-website-eu-west-1.amazonaws.com"
+)
+
+var s3WebSiteEndpointMap = map[string]string{
+	"eu-central-1": S3WebSiteEndPointEuCentral1,
+	"eu-west-1": S3WebSiteEndPointEuWest1,
+}
 
 // R53API defines the interface for the CreateHostedZone function.
 // We use this interface to test the function using a mocked service.
@@ -56,8 +64,8 @@ func NewR53Client() (*r53.Client, error) {
 //	dns zone id
 //
 // example endpoint http://www.testwebsite.devops.lk.s3-website.eu-central-1.amazonaws.com
-func MakeRoutes(c context.Context, client R53API, dnsname, zoneid string) (string, error) {
-	s3websiteendpoint := dnsname + S3WebSiteEndPointEuCentral1
+func MakeRoutes(c context.Context, client R53API, dnsname, zoneid string, region string) (string, error) {
+	s3websiteendpoint := dnsname + s3WebSiteEndpointMap[region]
 	input := &r53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &r53types.ChangeBatch{
 			Changes: []r53types.Change{
@@ -67,7 +75,7 @@ func MakeRoutes(c context.Context, client R53API, dnsname, zoneid string) (strin
 						Name: aws.String(dnsname),
 						AliasTarget: &r53types.AliasTarget{
 							DNSName:      &s3websiteendpoint,
-							HostedZoneId: hostedZoneIDByS3EndpointRegion("eu-central-1"),
+							HostedZoneId: hostedZoneIDByS3EndpointRegion(region),
 						},
 						Type: r53types.RRTypeA,
 					},

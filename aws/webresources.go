@@ -4,12 +4,18 @@ import (
 	"context"
 	"errors"
 	"log"
+	"github.com/aws/aws-sdk-go-v2/config"
 )
 
 // MakeWebResources is used to create an s3 bucket with website config and add required dns entries in Route53
 // input: website name, route 53 hosted zone id
 func NewWebResources(c context.Context, webSiteName string, route53HostedZoneID string, skipBucketCreation bool) error {
 
+	// Load the Shared AWS Configuration (~/.aws/config)
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
 	// creates s3 bucket if skip bucket creation is not true
 	if !skipBucketCreation {
 		// creates a s3 client
@@ -21,7 +27,7 @@ func NewWebResources(c context.Context, webSiteName string, route53HostedZoneID 
 		}
 
 		// creates s3 bucket and setup bucket for webhosting
-		bucket, err := MakeBucket(c, s3client, webSiteName)
+		bucket, err := MakeBucket(c, s3client, webSiteName, cfg.Region)
 		if err != nil {
 			log.Println("Error setting up s3 bucket")
 			log.Fatal(err)
@@ -40,7 +46,7 @@ func NewWebResources(c context.Context, webSiteName string, route53HostedZoneID 
 
 	// create route53 rules
 	// example hosted zone value "Z1TI4H711TUGO5"
-	dns, err := MakeRoutes(c, r53client, webSiteName, route53HostedZoneID)
+	dns, err := MakeRoutes(c, r53client, webSiteName, route53HostedZoneID, cfg.Region)
 	if err != nil {
 		log.Println("Error setting up R53 entries for " + webSiteName)
 		log.Fatal(err)

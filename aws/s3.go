@@ -25,6 +25,13 @@ type S3BucketAPI interface {
 	PutObject(ctx context.Context,
 		params *s3.PutObjectInput,
 		optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+	DeletePublicAccessBlock(ctx context.Context,  
+		param *s3.DeletePublicAccessBlockInput,
+		optFns ...func(*s3.Options)) (*s3.DeletePublicAccessBlockOutput, error)
+	PutBucketAcl(ctx context.Context, 
+		param *s3.PutBucketAclInput,
+		optFns ...func(*s3.Options)) (*s3.PutBucketAclOutput, error)
+
 }
 
 // S3PutObjectAPI defines the interface for the PutObject function.
@@ -59,16 +66,26 @@ func NewS3Client() (*s3.Client, error) {
 
 // MakeBucket is used to create an s3 bucket with website config
 // input: website name
-func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (string, error) {
+func MakeBucket(c context.Context, client S3BucketAPI, bucketname string, region string) (string, error) {
 	if bucketname == "" {
 		log.Println("You must supply a bucket name.")
 		return "", errors.New("empty  bucket name")
 	}
+
 	input := &s3.CreateBucketInput{
 		Bucket: &bucketname,
-		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraintEuCentral1,
-		},
+		// ACL:    types.BucketCannedACLPublicRead,
+		ObjectOwnership: types.ObjectOwnershipBucketOwnerPreferred, // Required
+		// CreateBucketConfiguration: &types.CreateBucketConfiguration{
+		// 	LocationConstraint: types.BucketLocationConstraintEuCentral1,
+		// },
+	}
+
+	// Set the location constraint if needed
+	if region != "us-east-1" {
+		input.CreateBucketConfiguration = &types.CreateBucketConfiguration{
+			LocationConstraint: types.BucketLocationConstraint(region),
+		}
 	}
 
 	_, err := createBucket(c, client, input)
@@ -97,6 +114,29 @@ func MakeBucket(c context.Context, client S3BucketAPI, bucketname string) (strin
 		return "", err
 	}
 
+	deleteBucket := &s3.DeletePublicAccessBlockInput{
+		Bucket: &bucketname,
+	}
+
+	_, err = deletePublicAccessBlock(c, client, deleteBucket)
+	if err != nil {
+		log.Println("bucket " + bucketname + " public access block removed")
+		log.Println(err)
+		return "", err
+	}
+
+	aclInput := &s3.PutBucketAclInput{
+		Bucket: &bucketname,
+		ACL:    types.BucketCannedACLPublicRead,
+	}
+
+	_, err = putBucketAcl(c, client, aclInput)
+	if err!= nil {
+		log.Println("bucket " + bucketname + " ACL set to public-read")
+		log.Println(err)
+		return "", err
+	}
+
 	return bucketname, nil
 
 }
@@ -119,6 +159,11 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 
 	filename = "index.html"
 
+	// Specify object metadata
+	metadata := map[string]string{
+		"Content-Type": "text/html",
+	}
+
 	// set ACL and other parameters according to
 	// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3#PutObjectInput
 	// more on Canned ACL : https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
@@ -127,6 +172,7 @@ func UploadFile(c context.Context, client S3BucketAPI, filename, bucketname stri
 		Key:    &filename,
 		Body:   file,
 		ACL:    types.ObjectCannedACLPublicRead,
+		Metadata: metadata,
 	}
 
 	log.Printf("Trying to upload file: %s to s3", filename)
@@ -195,10 +241,16 @@ func UploadFolder(c context.Context, client S3BucketAPI, localPath, bucketname s
 			log.Println("Failed opening file", path, err)
 			continue
 		}
+		// Specify object metadata
+		metadata := map[string]string{
+			"Content-Type": "text/html",
+		}
+
 		result, err := uploader.Upload(context.TODO(), &s3.PutObjectInput{
 			Bucket: &bucketname,
 			Key:    aws.String(filepath.Join(prefix, rel)),
 			Body:   file,
+			Metadata: metadata,
 			// more on Canned ACL : https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#CannedACL
 			ACL: types.ObjectCannedACLPublicRead,
 		})
@@ -241,6 +293,25 @@ func createBucket(c context.Context, api S3BucketAPI, input *s3.CreateBucketInpu
 //	Otherwise, nil and an error from the call to CreateBucket.
 func putBucketConfg(c context.Context, bucketname string, api S3BucketAPI, input *s3.PutBucketWebsiteInput) (*s3.PutBucketWebsiteOutput, error) {
 	return api.PutBucketWebsite(c, input)
+}
+
+// deletePublicAccessBlock deletes the PublicAccessBlock configuration for an Amazon S3 bucket.
+// Inputs:
+//
+//	c is the context of the method call, which includes the AWS Region
+//	api is the interface that defines the method call
+//	input defines the input arguments to the service call.
+//
+// Output:
+//
+//	If success, a DeletePublicAccessBlockOutput object containing the result of the service call and nil.
+//	Otherwise, nil and an error from the call to DeletePublicAccessBlock.
+func deletePublicAccessBlock(c context.Context, api S3BucketAPI, input *s3.DeletePublicAccessBlockInput) (*s3.DeletePublicAccessBlockOutput, error) {
+	return api.DeletePublicAccessBlock(c, input)
+}
+
+func putBucketAcl(c context.Context, api S3BucketAPI, input *s3.PutBucketAclInput) (*s3.PutBucketAclOutput, error) {
+	return api.PutBucketAcl(c, input)
 }
 
 // putFile uploads a file to an Amazon Simple Storage Service (Amazon S3) bucket
